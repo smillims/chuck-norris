@@ -1,46 +1,25 @@
-import { useEffect, useState } from "react";
-import ShowAdvice from "../ShowAdvice/ShowAdvice";
 import CategoriesLists from "../CategoriesLists";
-import "./Categories.module.css";
+import ShowAdvice from "../ShowAdvice/ShowAdvice";
+import styles from "./Categories.module.css";
 
-function Categories() {
-  const [categories, setCategories] = useState([]);
-  const [error, setError] = useState(null);
-  //const [isDataLoading, setIsDataLoading] = useState(false);
-  const [clickedCategories, setClickedCategories] = useState([]);
+function Categories({ categories, clickedCategories, setClickedCategories, dataLoading, error }) {
 
-  useEffect(() => {
-    //**не забыть использовать setIsDataLoading в будущем;
-    fetch(`https://api.chucknorris.io/jokes/categories`)
-      .then((response) => response.json())
-      .then((data) => {
-        if (!data.length) {
-          throw Error(error);
-        }
-        setCategories(data);
-        setError(null);
-      })
-      .catch(setError);
-    //**попробовать реализовать promiseAll
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  if (error) {
+    return <p className={styles.status}>{typeof error === 'object' ? error.toString() : error}</p>
+  }
+
+  if (dataLoading) {
+    return <p className={styles.status}>Loading...</p>;
+  }
+
 
   return (
     <div className="container">
-      <h3>Categories</h3>
-      <CategoriesLists categories={categories} clickedCategories={clickedCategories} setClickedCategories={setClickedCategories} />
-      {/*<ul
-        onClick={(event) => {
-          if (event.target.tagName === "UL") return;
-          setClickedCategories([...clickedCategories, event.target.textContent]);
-        }}
-      >
-        {categories.map((item) => (
-          <li key={item}>{item}</li>
-        ))}
-        <li>random</li>
-      </ul>*/}
-      <ShowAdvice clickedCategories={clickedCategories} />
+      <div className={styles.categories}>
+        <h2>Categories</h2>
+        <CategoriesLists categories={categories} clickedCategories={clickedCategories} setClickedCategories={setClickedCategories} />
+        <ShowAdvice clickedCategories={clickedCategories} />
+      </div>
     </div>
   );
 }
